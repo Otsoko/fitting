@@ -1,38 +1,40 @@
 #include "fitting.h"
-#include <stdio.h>
-#include <string.h>
 
-void least_squares(double *x, double *y, int n) {
-    double a = 0.0;
-    double b = 0.0;
+/**
+ * @brief Computes the best-fit linear regression coefficients a and b of the model y = ax + b for the dataset (x,y) by least squares.
+ * 
+ * @param x x-axis dataset
+ * @param y y-axis dataset
+ * @param n x and y arrays length
+ * @param a regression coefficient
+ * @param b regression coefficient
+ */
+void least_squares(double *x, double *y, int n, double *a, double *b) {
 
-    double xmean   = mean(x, n);
-    double ymean   = mean(y, n);
-    double xsqmean = sqmean(x, n);
-    double ysqmean = sqmean(y, n);
-    double pmean   = product_mean(x, y, n);
+    double xmean   = 0.0;
+    double ymean   = 0.0;
+    double xsqmean = 0.0;
+    double ysqmean = 0.0;
+    double pmean   = 0.0;
 
-    printf("\nSeparated means:\n");
-    printf("\n\nxm: %g ym: %g\n", xmean, ymean);
-    printf("xsqm: %g ysqm: %g\n", xsqmean, ysqmean);
-    printf("pm: %g\n", pmean);
+    *a = 0.0;
+    *b = 0.0;
 
     means(x, y, n, &xmean, &ymean, &xsqmean, &ysqmean, &pmean);
 
-    printf("\nAll means:\n");
-    printf("\n\nxm: %g ym: %g\n", xmean, ymean);
-    printf("xsqm: %g ysqm: %g\n", xsqmean, ysqmean);
-    printf("pm: %g\n", pmean);
+    *a = (pmean - xmean * ymean) / (xsqmean - xmean * xmean);
+    *b = ymean - *a * xmean;
 
-    a = (pmean - xmean * ymean) / (xsqmean - xmean * xmean);
-    b = ymean - a * xmean;
-
-    printf("\ny = %gx + %g\n", a, b);
-
-    double val = 12.32;
-    printf("\nValue at %g: y = %g * %g + %g = %g\n\n", val, a, val, b, (a * val + b));
+    return;
 }
 
+/**
+ * @brief Computed the mean of an array x with length n.
+ * 
+ * @param x dataset
+ * @param n length
+ * @return double mean
+ */
 double mean(double *x, int n) {
     double result = 0.0;
     for (int i = 0; i < n; i++) {
@@ -41,6 +43,13 @@ double mean(double *x, int n) {
     return result / n;
 }
 
+/**
+ * @brief Computed the squared mean of an array x with length n.
+ * 
+ * @param x dataset
+ * @param n length
+ * @return double mean
+ */
 double sqmean(double *x, int n) {
     double result = 0.0;
     for (int i = 0; i < n; i++) {
@@ -49,6 +58,14 @@ double sqmean(double *x, int n) {
     return result / n;
 }
 
+/**
+ * @brief Computed the product mean of arrays x and y with length n.
+ * 
+ * @param x dataset x
+ * @param y dataset y
+ * @param n length
+ * @return double mean
+ */
 double product_mean(double *x, double *y, int n) {
     double result = 0.0;
     for (int i = 0; i < n; i++) {
@@ -57,6 +74,18 @@ double product_mean(double *x, double *y, int n) {
     return result / n;
 }
 
+/**
+ * @brief Computes the different means needed for the least squares coefficients calculation.
+ * 
+ * @param x dataset x
+ * @param y dataset y
+ * @param n length
+ * @param xmean dataset x mean
+ * @param ymean dataset y mean
+ * @param xsqmean dataset x squared mean
+ * @param ysqmean dataset y squared mean
+ * @param pmean datasets x and y product mean
+ */
 void means(double *x, double *y, int n, double *xmean, double *ymean, double *xsqmean, double *ysqmean, double *pmean) {
     *xmean   = 0.0;
     *ymean   = 0.0;
